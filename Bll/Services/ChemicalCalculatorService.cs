@@ -1,5 +1,6 @@
 ﻿using Bll.Dto;
 using Dal.Models;
+using Microsoft.EntityFrameworkCore;
 using PrimeChemicalConnectionsCalculator;
 using System;
 using System.Collections.Generic;
@@ -17,22 +18,26 @@ namespace Bll.Services
             _context = context;
         }
 
-        public Task<ChemicalConnectionDto> CalculateConnection(int AtomicNumber1, int AtomicNumber2)
+        public async Task<ChemicalConnectionDto> CalculateConnection(int AtomicNumber1, int AtomicNumber2)
         {
-            var element1 = _context.TryFindElementModelByAtomicNumberAsync(AtomicNumber1);
-            var element2 = _context.TryFindElementModelByAtomicNumberAsync(AtomicNumber2);
+            var elementModel1 = await _context.TryFindElementModelByAtomicNumberAsync(AtomicNumber1);//Throws InvalidOperationException
+            var elementModel2 = await _context.TryFindElementModelByAtomicNumberAsync(AtomicNumber2);//Throws InvalidOperationException
 
-            throw new NotImplementedException();
+            var connection = new ChemicalConnection(
+                ConvertElementModelToExternalImplementation(elementModel1),//Throws ArgumentException
+                ConvertElementModelToExternalImplementation(elementModel2));//Throw ArgumentException
+
+            return ConvertExternalChemicalConnectionToDto(connection);
         }
-        public Task<IEnumerable<ChemicalElementDto>> GetChemicalElements()
+        public async Task<IEnumerable<ChemicalElementDto>> GetChemicalElements()
         {
-            throw new NotImplementedException();
+            return await _context.ElementModels.Select(el => ConvertElementModelToDto(el)).ToListAsync();
 
         }
-        public Task<ChemicalElementDto> GetChemicalElementByAtomicNumber(int AtomicNumber)
+        public async Task<ChemicalElementDto> GetChemicalElementByAtomicNumber(int AtomicNumber)
         {
-            throw new NotImplementedException();
-
+            var element = await _context.TryFindElementModelByAtomicNumberAsync(AtomicNumber);//Throws InvalidOperationException
+            return ConvertElementModelToDto(element);
         }
 
         private ChemicalElement ConvertElementModelToExternalImplementation(ElementModel model)
@@ -45,6 +50,27 @@ namespace Bll.Services
                 electronegativity: model.Eleckronegativity
                 );
             return element;
+        }
+        private ChemicalConnectionDto ConvertExternalChemicalConnectionToDto(ChemicalConnection connection)
+        {
+            return new ChemicalConnectionDto
+            {
+                Name = connection.Name,
+                Formula = connection.Formula,
+                Mass = connection.Mass
+            };
+        }
+        private ChemicalElementDto ConvertElementModelToDto(ElementModel model)
+        {
+            return new ChemicalElementDto
+            {
+                AtomicNumber = checked((uint)model.AtomicNumber),
+                Mass = checked((uint)model.Mass),
+                Formula = model.Formula,
+                Name = model.Name,
+                Eleckronegativity = model.Eleckronegativity,
+                ElementType = model.ElementType
+            };
         }
     }
 }

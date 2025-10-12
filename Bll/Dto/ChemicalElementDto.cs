@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dal.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,6 @@ namespace Bll.Dto
 {
     public class ChemicalElementDto
     {
-        public int Id { get; set; }
-
         public long AtomicNumber { get; set; }
 
         public float? Eleckronegativity { get; set; }
@@ -20,6 +19,6 @@ namespace Bll.Dto
 
         public string Formula { get; set; } = null!;
 
-        public int ElementType { get; set; }
+        public ElementType ElementType { get; set; }
     }
 }

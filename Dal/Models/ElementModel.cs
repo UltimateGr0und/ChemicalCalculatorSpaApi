@@ -3,15 +3,6 @@ using System.Collections.Generic;
 
 namespace Dal.Models;
 
-public enum ElementType
-{
-    s,
-    p,
-    d,
-    f,
-    n
-}
-
 public partial class ElementModel
 {
     public int Id { get; set; }

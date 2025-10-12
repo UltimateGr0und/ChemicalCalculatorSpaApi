@@ -8,9 +8,9 @@ namespace Bll.Dto
 {
     public class ChemicalConnectionDto
     {
-        public ChemicalElementDto element1 { get; set; } = null!;
-        public ChemicalElementDto element2 { get; set; } = null!;
-        public int index1 { get; set; }
-        public int index2 { get; set; }
+        public string Formula {  get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public uint Mass {  get; set; }
+
     }
 }
