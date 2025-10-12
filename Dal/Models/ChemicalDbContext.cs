@@ -16,11 +16,10 @@ public partial class ChemicalDbContext : DbContext
     }
 
     public virtual DbSet<ElementModel> ElementModels { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ChemicalDb");
-
+    public async Task<ElementModel> TryFindElementModelByAtomicNumberAsync(int AtomicNumber)
+    {
+        return await ElementModels.SingleAsync(el => el.AtomicNumber==AtomicNumber);
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ElementModel>(entity =>
