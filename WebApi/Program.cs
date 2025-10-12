@@ -1,4 +1,5 @@
 using Dal.Models;
+using Bll.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -20,6 +21,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<ChemicalDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ChemicalDb")));
+
+builder.Services.AddScoped<IChemicalCalculatorService,ChemicalCalculatorService>();
 
 var app = builder.Build();
 

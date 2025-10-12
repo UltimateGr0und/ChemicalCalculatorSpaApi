@@ -1,4 +1,5 @@
-﻿using Dal.Models;
+﻿using Bll.Services;
+using Bll.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,16 +10,23 @@ namespace WebApi.Api
     [ApiController]
     public class ElementsController : ControllerBase
     {
-        private readonly ChemicalDbContext _context;
-        public ElementsController(ChemicalDbContext context)
+        private readonly IChemicalCalculatorService _service;
+        public ElementsController(IChemicalCalculatorService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpGet]
-        public async Task<List<ElementModel>> Get()
+        public async Task<IEnumerable<ChemicalElementDto>> Get()
         {
-            return await _context.ElementModels.ToListAsync();
+            return await _service.GetChemicalElements();
+        }
+
+        [Route("{AtomicNumber}")]
+        [HttpGet]
+        public async Task<ChemicalElementDto> Get(int AtomicNumber)
+        {
+            return await _service.GetChemicalElementByAtomicNumber(AtomicNumber);
         }
     }
 }

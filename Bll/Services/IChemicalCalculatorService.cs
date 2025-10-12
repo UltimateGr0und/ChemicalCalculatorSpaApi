@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bll.Services
 {
-    internal interface IChemicalCalculatorService
+    public interface IChemicalCalculatorService
     {
         public Task<ChemicalConnectionDto> CalculateConnection(int AtomicNumber1, int AtomicNumber2);
         public Task<IEnumerable<ChemicalElementDto>> GetChemicalElements();

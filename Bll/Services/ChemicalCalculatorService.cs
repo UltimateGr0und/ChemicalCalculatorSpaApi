@@ -40,7 +40,7 @@ namespace Bll.Services
             return ConvertElementModelToDto(element);
         }
 
-        private ChemicalElement ConvertElementModelToExternalImplementation(ElementModel model)
+        private static ChemicalElement ConvertElementModelToExternalImplementation(ElementModel model)
         {
             ChemicalElement element = new ChemicalElement(
                 number: checked((uint)model.AtomicNumber),
@@ -51,7 +51,7 @@ namespace Bll.Services
                 );
             return element;
         }
-        private ChemicalConnectionDto ConvertExternalChemicalConnectionToDto(ChemicalConnection connection)
+        private static ChemicalConnectionDto ConvertExternalChemicalConnectionToDto(ChemicalConnection connection)
         {
             return new ChemicalConnectionDto
             {
@@ -60,7 +60,7 @@ namespace Bll.Services
                 Mass = connection.Mass
             };
         }
-        private ChemicalElementDto ConvertElementModelToDto(ElementModel model)
+        private static ChemicalElementDto ConvertElementModelToDto(ElementModel model)
         {
             return new ChemicalElementDto
             {
