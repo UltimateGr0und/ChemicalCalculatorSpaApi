@@ -26,7 +26,7 @@ builder.Services.AddScoped<IChemicalCalculatorService,ChemicalCalculatorService>
 
 var app = builder.Build();
 
-app.UseCors();
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
 {
