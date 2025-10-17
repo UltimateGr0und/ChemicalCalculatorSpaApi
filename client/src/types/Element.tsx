@@ -1,6 +1,6 @@
 
 export type Element = {
-    atomicNumber: string;
+    atomicNumber: number;
     eleckronegativity: number;
     mass: number;
     name: string;
