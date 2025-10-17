@@ -11,8 +11,9 @@ type ChemicalConnection = {
 function App() {
 
     const [elements, setElements] = useState<Element[]>();
-    const [ActiveElements, setActiveElements] = useState<Element[]>([]);
-    const [CurrentConnection, setCurrentConnection] = useState<ChemicalConnection|null>(null);
+    const [ActiveElements, setActiveElements] = useState<number[]>([]);
+    const [CurrentConnection, setCurrentConnection] = useState<ChemicalConnection | null>(null);
+
     const toggleActive = useCallback((id: number) => {
         if (elements) {
             setElements(prev =>
@@ -21,7 +22,8 @@ function App() {
                 )
             );
         }
-    }, [elements, setElements])
+    }, [elements, setElements]);
+
     useEffect(() => {
 
         const fetchElements = async () => {
@@ -39,30 +41,35 @@ function App() {
 
     useEffect(() => {
         if (ActiveElements.length > 2) {
-            toggleActive(ActiveElements[0].atomicNumber)
-            setActiveElements([...(ActiveElements.slice(1, 3))])
+            toggleActive(ActiveElements[0]);
+            setActiveElements([...(ActiveElements.slice(1, 3))]);
         }
-        const fetchConnection = async (first:number,second:number) => {
+
+        const fetchConnection = async (first: number, second: number) => {
             const res = await fetch(`https://localhost:7211/api/connection/${first}/${second}`);
             const data: ChemicalConnection = await res.json();
-            setCurrentConnection(data)
+            setCurrentConnection(data);
             console.log(data);
-        } 
-        if (ActiveElements && ActiveElements.length>=2) {
-            fetchConnection(ActiveElements.at(-1).atomicNumber, ActiveElements.at(-2).atomicNumber);
         }
-    }, [ActiveElements,setActiveElements,toggleActive,setCurrentConnection])
+        if (ActiveElements && ActiveElements.length >= 2) {
+            fetchConnection(ActiveElements.at(-1), ActiveElements.at(-2));
+        }
+    }, [ActiveElements, setActiveElements, toggleActive, setCurrentConnection]);
 
-    const SetElementActive = (atomicN: number) => {
-        //console.log("event handler");
+    const elementOnClickAction = (atomicN: number) => {
         const el: Element | undefined = elements?.find(el => el.atomicNumber == atomicN);
         if (el===undefined) {
             console.log("error");
             return
         }
-
         toggleActive(atomicN)
-        setActiveElements([...ActiveElements, el])
+        if (ActiveElements.includes(atomicN)) {
+            setActiveElements(prev => prev.filter(el => el != atomicN));
+            setCurrentConnection(null);
+        } else {
+            setActiveElements([...ActiveElements, el.atomicNumber]);
+        }
+
     }
 
 
@@ -70,7 +77,7 @@ function App() {
   return (
     <div className="bg-zinc-800 text-white p-10">
       <h1>Chemical elements</h1>
-          {elements ? <ElementsTable ElementOnClick={SetElementActive} Elements={elements} Label={CurrentConnection?.formula } /> : "nodata"}
+          {elements ? <ElementsTable ElementOnClick={elementOnClickAction} Elements={elements} Label={CurrentConnection?.formula } /> : "nodata"}
     </div>
   )
 }
