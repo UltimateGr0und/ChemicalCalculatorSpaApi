@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import type { ElementDto } from '../../types/Element'
 import type { ChemicalConnectionDto } from '../../types/ChemicalConnection'
 import ElementsTable from '../ElementsTable/ElementsTable'
+import { fetchElements, fetchConnection } from '../../api/Elements'
 
 
 
@@ -22,18 +23,15 @@ function ChemicalCalculator() {
     }, [elements, setElements]);
 
     useEffect(() => {
-
-        const fetchElements = async () => {
-            const res = await fetch("https://localhost:7211/api/elements");
-            const data: ElementDto[] = await res.json();
-            const elements: ElementDto[] = data.map((el: Omit<ElementDto, "isActive">) => ({
-                ...el,
-                isActive: false,
-            }));
-            setElements(elements);
-        };
-
-        fetchElements();
+        const tryFetch = async () => { 
+            try {
+                const data = await fetchElements();
+                setElements(data);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        tryFetch();
     }, []);
 
     useEffect(() => {
@@ -42,21 +40,17 @@ function ChemicalCalculator() {
             setActiveElements([...(ActiveElements.slice(1, 3))]);
         }
 
-        const fetchConnection = async (first: number, second: number) => {
-            const url = `https://localhost:7211/api/connection/${first}/${second}`
-            const res = await fetch(url);
-            if (res.ok) {
-                const data: ChemicalConnectionDto = await res.json();
+        const tryFetch = async (first: number, second: number) => {
+            try {
+                const data = await fetchConnection(first,second);
                 setCurrentConnection(data);
-                console.log(data);
-            } else {
-                const error = "error: "+await res.text();
-                setCurrentConnection(error);
+            } catch (e) {
+                console.log(e);
             }
-
         }
+
         if (ActiveElements && ActiveElements.length >= 2) {
-            fetchConnection(ActiveElements.at(-1), ActiveElements.at(-2));
+            tryFetch(ActiveElements.at(-1), ActiveElements.at(-2));
         }
     }, [ActiveElements, setActiveElements, toggleActive, setCurrentConnection]);
 
@@ -74,9 +68,7 @@ function ChemicalCalculator() {
             setActiveElements([...ActiveElements, atomicN]);
         }
 
-    }, [elements,ActiveElements,setActiveElements,toggleActive]);
-
-
+    }, [elements, ActiveElements, setActiveElements, toggleActive]);
 
     return (
         <div className="bg-zinc-700 text-white inline-block">
