@@ -1,53 +1,50 @@
-import type { ChemicalConnectionDto } from '../../types/ChemicalConnection'
-import type { ElementDto } from '../../types/Element'
+import { useElements } from '../../hooks/useElements'
 import ElementComp from '../Element/ElementComp'
 import FElementComp from '../Element/FElementComp'
 import { memo } from 'react'
 
-type ElementsTableProps = {
-    Elements: ElementDto[],
-    ElementOnClick: (atomicN: number) => void,
-    Label: ChemicalConnectionDto | string
-}
+//type ElementsTableProps = { }
 
-const ElementsTable = memo(function ElementsTable({
-    Elements,
-    ElementOnClick,
-    Label
-}: ElementsTableProps) {
+const ElementsTable = memo(function ElementsTable() {
+    console.log('table render')
+    const { elements, currentConnection } = useElements();
 
+    if (elements.length == 0) {
+        return "loading";
+    }
     return (
         <div className="m-10 inline-block w-270">
             <div className="grid grid-flow-row-dense grid-cols-10 grid-rows-10 size-fit">
 
-                <ElementComp onClickEvent={ElementOnClick} element={Elements[0]} />
+                <ElementComp element={elements[0]} />
                 {/*Label*/}
                 <div className="col-span-6 p-5 h-25">
-                    {typeof Label === "string" ?
-                        Label.startsWith("error") ?
+                    {typeof currentConnection === "string" ?
+                        currentConnection.startsWith("error") ?
                             <span className="text-red-500 text-xl">
-                                {Label}
+                                {currentConnection}
                             </span> :
                             <span className="text-5xl">
-                                {Label}
+                                {currentConnection}
                             </span> :
                         <div className="inline-flex space-x-4">
                             <span className="text-5xl">
-                                {Label.formula}
+                                {currentConnection.formula}
                             </span>
                             <div className="inline-block italic text-xl">
                                 <p>
-                                    mass: {Label.mass}
+                                    mass: {currentConnection.mass}
                                 </p>
                                 <p>
-                                    ({Label.name})
+                                    ({currentConnection.name})
                                 </p>
                             </div>
                         </div>
                     }
                 </div>
 
-                <ElementComp onClickEvent={ElementOnClick} element={Elements[1]} />
+                <ElementComp element={elements[1]} />
+                {/*Legenda*/}
                 <div className="col-span-2 row-span-3 p-5">
                     <h3 className="text-xl">legenda</h3>
                     <ul>
@@ -73,21 +70,21 @@ const ElementsTable = memo(function ElementsTable({
                         </li>
                     </ul>
                 </div>
-                {Elements.slice(2, 36).map(el => <ElementComp onClickEvent={ElementOnClick} element={el} />)}
+                {elements.slice(2, 36).map(el => <ElementComp element={el} />)}
                 <div className="col-span-2"></div>
-                {Elements.slice(36, 54).map(el => <ElementComp onClickEvent={ElementOnClick} element={el} />)}
+                {elements.slice(36, 54).map(el => <ElementComp element={el} />)}
                 <div className="col-span-2"></div>
-                {Elements.slice(54, 56).map(el => <ElementComp onClickEvent={ElementOnClick} element={el} />)}
-                {Elements.slice(70, 86).map(el => <ElementComp onClickEvent={ElementOnClick} element={el} />)}
+                {elements.slice(54, 56).map(el => <ElementComp element={el} />)}
+                {elements.slice(70, 86).map(el => <ElementComp element={el} />)}
                 <div className="col-span-2"></div>
-                {Elements.slice(86, 88).map(el => <ElementComp onClickEvent={ElementOnClick} element={el} />)}
-                {Elements.slice(102, 118).map(el => <ElementComp onClickEvent={ElementOnClick} element={el} />)}
+                {elements.slice(86, 88).map(el => <ElementComp element={el} />)}
+                {elements.slice(102, 118).map(el => <ElementComp element={el} />)}
                 <div className="col-span-2"></div>
             </div>
 
             <div className="grid grid-flow-row-dense grid-cols-14 grid-rows-2 size-fit">
-                {Elements.slice(56, 70).map(el => <FElementComp onClickEvent={ElementOnClick} element={el} />)}
-                {Elements.slice(88, 102).map(el => <FElementComp onClickEvent={ElementOnClick} element={el} />)}
+                {elements.slice(56, 70).map(el => <FElementComp element={el} />)}
+                {elements.slice(88, 102).map(el => <FElementComp element={el} />)}
             </div>
         </div>
     );

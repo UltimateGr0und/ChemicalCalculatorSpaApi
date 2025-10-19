@@ -7,10 +7,10 @@ import { fetchElements, fetchConnection } from '../api/Elements';
 
 type ElementsContextType = {
     elements: ElementDto[];
+    currentConnection: ChemicalConnectionDto | string;
 };
 
 type ElementsActionsType = {
-    currentConnection: ChemicalConnectionDto | string;
     elementOnClickAction: (atomicNumber: number) => void;
 };
 
@@ -20,7 +20,7 @@ export const ElementsActionsContext = createContext<ElementsActionsType | null>(
 export const ElementsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [elements, setElements] = useState<ElementDto[]>([]);
     const [activeElements, setActiveElements] = useState<number[]>([]);
-    const [currentConnection, setCurrentConnection] = useState<ChemicalConnectionDto | string>("no data");
+    const [currentConnection, setCurrentConnection] = useState<ChemicalConnectionDto | string>("Choose two elements");
 
     const toggleActive = useCallback((atomicNumber: number) => {
         if (elements) {
@@ -80,13 +80,13 @@ export const ElementsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }, [activeElements, setActiveElements, toggleActive, setCurrentConnection]);
 
     const values = useMemo(
-        () => ({ elements }),
-        [elements]
+        () => ({ elements, currentConnection }),
+        [elements, currentConnection]
     );
 
     const actions = useMemo(
-        () => ({ currentConnection, elementOnClickAction }),
-        [currentConnection, elementOnClickAction] 
+        () => ({ elementOnClickAction }),
+        [elementOnClickAction]
     );
 
     return (
