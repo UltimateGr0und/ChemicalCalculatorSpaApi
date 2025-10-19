@@ -1,17 +1,20 @@
-import type { Element } from '../../types/Element'
+import type { ElementDto } from '../../types/Element'
+import { memo } from 'react'
 
 type ElementCompProps = {
-    element: Element
+    element: ElementDto
     onClickEvent: (AtomicN:number)=>void
 }
-//onClickEvent(element.atomicNumber) 
-function ElementComp({ element, onClickEvent }: ElementCompProps) {
+
+const ElementComp = memo(function ElementComp({ element, onClickEvent }: ElementCompProps) {
     const GroupColor: { [key: number]: string } = {
         0: "bg-red-500 hover:bg-red-800",
         1: "bg-blue-500 hover:bg-blue-800",
         2: "bg-green-500 hover:bg-green-800",
         4: "bg-violet-500 hover:bg-violet-800",
     };
+
+    console.log(element.name);
 
     return (
         element.isActive ?
@@ -27,6 +30,6 @@ function ElementComp({ element, onClickEvent }: ElementCompProps) {
           <span className="mt-2 break-all text-gray-200">{ element.name}</span>
       </div>
   );
-}
+});
 
 export default ElementComp;

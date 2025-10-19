@@ -1,83 +1,12 @@
-import { useState,useEffect,useCallback } from 'react'
-import type { Element } from './types/Element'
-import ElementsTable from './components/ElementsTable/ElementsTable'
+import ChemicalCalculator from './components/ChemicalCalculator/ChemicalCalculator'
 
-type ChemicalConnection = {
-    formula: string,
-    name: string,
-    mass:number
-}
+
 
 function App() {
 
-    const [elements, setElements] = useState<Element[]>();
-    const [ActiveElements, setActiveElements] = useState<number[]>([]);
-    const [CurrentConnection, setCurrentConnection] = useState<ChemicalConnection | null>(null);
-
-    const toggleActive = useCallback((id: number) => {
-        if (elements) {
-            setElements(prev =>
-                prev?.map(el =>
-                    el.atomicNumber === id ? { ...el, isActive: !el.isActive } : el
-                )
-            );
-        }
-    }, [elements, setElements]);
-
-    useEffect(() => {
-
-        const fetchElements = async () => {
-            const res = await fetch("https://localhost:7211/api/elements");
-            const data: Element[] = await res.json();
-            const elements: Element[] = data.map((el: Omit<Element, "isActive">) => ({
-                ...el,
-                isActive: false,
-            }));
-            setElements(elements);
-        };
-
-        fetchElements();
-    }, []);
-
-    useEffect(() => {
-        if (ActiveElements.length > 2) {
-            toggleActive(ActiveElements[0]);
-            setActiveElements([...(ActiveElements.slice(1, 3))]);
-        }
-
-        const fetchConnection = async (first: number, second: number) => {
-            const res = await fetch(`https://localhost:7211/api/connection/${first}/${second}`);
-            const data: ChemicalConnection = await res.json();
-            setCurrentConnection(data);
-            console.log(data);
-        }
-        if (ActiveElements && ActiveElements.length >= 2) {
-            fetchConnection(ActiveElements.at(-1), ActiveElements.at(-2));
-        }
-    }, [ActiveElements, setActiveElements, toggleActive, setCurrentConnection]);
-
-    const elementOnClickAction = (atomicN: number) => {
-        const el: Element | undefined = elements?.find(el => el.atomicNumber == atomicN);
-        if (el===undefined) {
-            console.log("error");
-            return
-        }
-        toggleActive(atomicN)
-        if (ActiveElements.includes(atomicN)) {
-            setActiveElements(prev => prev.filter(el => el != atomicN));
-            setCurrentConnection(null);
-        } else {
-            setActiveElements([...ActiveElements, el.atomicNumber]);
-        }
-
-    }
-
-
-
   return (
     <div className="bg-zinc-800 text-white p-10">
-      <h1>Chemical elements</h1>
-          {elements ? <ElementsTable ElementOnClick={elementOnClickAction} Elements={elements} Label={CurrentConnection?.formula } /> : "nodata"}
+      <ChemicalCalculator/>
     </div>
   )
 }

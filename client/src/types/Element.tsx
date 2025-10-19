@@ -1,5 +1,5 @@
 
-export type Element = {
+export type ElementDto = {
     atomicNumber: number;
     eleckronegativity: number;
     mass: number;
