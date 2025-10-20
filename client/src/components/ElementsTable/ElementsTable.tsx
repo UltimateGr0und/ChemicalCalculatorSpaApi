@@ -13,7 +13,7 @@ const ElementsTable = memo(function ElementsTable() {
         return "loading";
     }
     return (
-        <div className="m-10 inline-block w-270">
+        <div className="m-10 bg-zinc-700 p-10 box-content w-270">
             <div className="grid grid-flow-row-dense grid-cols-10 grid-rows-10 size-fit">
 
                 <ElementComp element={elements[0]} />
